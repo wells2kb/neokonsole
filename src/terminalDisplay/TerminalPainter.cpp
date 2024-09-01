@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QElapsedTimer>
 #include <QPainter>
+#include <QPainterPath>
 #include <QPen>
 #include <QRect>
 #include <QRegion>
@@ -779,6 +780,7 @@ void TerminalPainter::drawBelowText(QPainter &painter,
 {
     // setup painter
 
+    painter.setRenderHint(QPainter::Antialiasing);
     bool first = true;
     QRect constRect(0, 0, 0, 0);
     QColor backgroundColor;
@@ -795,7 +797,14 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                 first = false;
             } else {
                 if (drawBG) {
-                    painter.fillRect(constRect, backgroundColor);
+                    if (style[lastX].rendition.f.roundCorners) {
+                        QPainterPath path;
+                        path.addRoundedRect(constRect, 5, 5);
+                        painter.fillPath(path, backgroundColor);
+                    }
+                    else {
+                        painter.fillRect(constRect, backgroundColor);
+                    }
                 }
             }
             if (i == width) {
@@ -824,7 +833,8 @@ void TerminalPainter::drawBelowText(QPainter &painter,
             if (backgroundColor == colorTable[DEFAULT_BACK_COLOR]) {
                 backgroundColor = background;
             }
-            drawBG = backgroundColor != colorTable[DEFAULT_BACK_COLOR];
+
+            drawBG = backgroundColor != colorTable[DEFAULT_BACK_COLOR] || style[x].rendition.f.roundCorners != 0;
             if (style[x].rendition.f.transparent) {
                 drawBG = false;
             }

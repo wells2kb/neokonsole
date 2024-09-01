@@ -1905,6 +1905,9 @@ void Vt102Emulation::processToken(int token, int p, int q)
     case token_csi_ps('m',  106) : _currentScreen->setBackColor         (COLOR_SPACE_SYSTEM, 14); break;
     case token_csi_ps('m',  107) : _currentScreen->setBackColor         (COLOR_SPACE_SYSTEM, 15); break;
 
+    case token_csi_ps('m',  108) : _currentScreen->setRendition         (RE_ROUNDCORNERS_MASK); break;
+    case token_csi_ps('m',  109) : _currentScreen->resetRendition       (RE_ROUNDCORNERS_MASK); break;
+
     case token_csi_ps('n',   5) :      reportStatus         (          ); break;
     case token_csi_ps('n',   6) :      reportCursorPosition (          ); break;
     case token_csi_ps('q',   0) : /* IGNORED: LEDs off                 */ break; //VT100
