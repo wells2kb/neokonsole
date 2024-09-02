@@ -797,9 +797,26 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                 first = false;
             } else {
                 if (drawBG) {
-                    if (style[lastX].rendition.f.roundCorners) {
+                    if (style[lastX].rendition.f.roundCorners == 15) {
                         QPainterPath path;
                         path.addRoundedRect(constRect, 5, 5);
+                        painter.fillPath(path, backgroundColor);
+                    }
+                    else if (style[lastX].rendition.f.roundCorners == 12) {
+                        QPainterPath path;
+                        path.addRoundedRect(constRect, 5, 5);
+                        painter.fillPath(path, backgroundColor);
+
+                        QRect hacktangle = QRect(rect.x() + fontWidth * (i - 1), rect.y(), fontWidth, rect.height());
+                        painter.fillRect(hacktangle, backgroundColor);
+                    }
+                    else if (style[lastX].rendition.f.roundCorners == 3) {
+                        constRect.setWidth(constRect.width() - fontWidth);
+                        painter.fillRect(constRect, backgroundColor);
+
+                        QPainterPath path;
+                        QRect hacktangle = QRect(rect.x() + fontWidth * (i - 2), rect.y(), fontWidth * 2, rect.height());
+                        path.addRoundedRect(hacktangle, 5, 5);
                         painter.fillPath(path, backgroundColor);
                     }
                     else {
