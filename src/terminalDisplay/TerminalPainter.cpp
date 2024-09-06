@@ -797,12 +797,18 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                 first = false;
             } else {
                 if (drawBG) {
+                    if (style[lastX].rendition.f.roundCorners != 0
+                            && style[x].rendition.f.roundCorners == 0){
+                        QRect hacktangle = QRect(rect.x() + fontWidth * (i - 0.5), rect.y(), fontWidth, rect.height());
+                        painter.fillRect(hacktangle, style[x].backgroundColor.color(colorTable));
+                    }
+
                     if (style[lastX].rendition.f.roundCorners == 15) {
                         QPainterPath path;
                         path.addRoundedRect(constRect, 5, 5);
                         painter.fillPath(path, backgroundColor);
                     }
-                    else if (style[lastX].rendition.f.roundCorners == 12) {
+                    else if (style[lastX].rendition.f.roundCorners == 9) {
                         QPainterPath path;
                         path.addRoundedRect(constRect, 5, 5);
                         painter.fillPath(path, backgroundColor);
@@ -810,7 +816,7 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                         QRect hacktangle = QRect(rect.x() + fontWidth * (i - 1), rect.y(), fontWidth, rect.height());
                         painter.fillRect(hacktangle, backgroundColor);
                     }
-                    else if (style[lastX].rendition.f.roundCorners == 3) {
+                    else if (style[lastX].rendition.f.roundCorners == 6) {
                         constRect.setWidth(constRect.width() - fontWidth);
                         painter.fillRect(constRect, backgroundColor);
 
@@ -820,6 +826,10 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                         painter.fillPath(path, backgroundColor);
                     }
                     else {
+                        if (style[x].rendition.f.roundCorners != 0)
+                        {
+                            constRect.setWidth(constRect.width() + (fontWidth * 0.5));
+                        }
                         painter.fillRect(constRect, backgroundColor);
                     }
                 }
