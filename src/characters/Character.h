@@ -99,29 +99,34 @@ typedef quint32 RenditionFlags;
 typedef quint16 ExtraFlags;
 
 /* clang-format off */
-const RenditionFlags DEFAULT_RENDITION  = 0;
-const RenditionFlags RE_BOLD            = (1 << 0);
-const RenditionFlags RE_BLINK           = (1 << 1);
-const RenditionFlags RE_TRANSPARENT     = (1 << 2);
-const RenditionFlags RE_REVERSE         = (1 << 3); // Screen only
-const RenditionFlags RE_ITALIC          = (1 << 4);
-const RenditionFlags RE_CURSOR          = (1 << 5);
-const RenditionFlags RE_EXTENDED_CHAR   = (1 << 6);
-const RenditionFlags RE_FAINT           = (1 << 7);
-const RenditionFlags RE_STRIKEOUT       = (1 << 8);
-const RenditionFlags RE_CONCEAL         = (1 << 9);
-const RenditionFlags RE_OVERLINE        = (1 << 10);
-const RenditionFlags RE_SELECTED        = (1 << 11);
-const RenditionFlags RE_UNDERLINE_MASK  = (15 << 12);
-const RenditionFlags RE_UNDERLINE_NONE  = 0;
-const RenditionFlags RE_UNDERLINE       = 1;
-const RenditionFlags RE_UNDERLINE_DOUBLE= 2;
-const RenditionFlags RE_UNDERLINE_CURL  = 3;
-const RenditionFlags RE_UNDERLINE_DOT   = 4;
-const RenditionFlags RE_UNDERLINE_DASH  = 5;
-const RenditionFlags RE_UNDERLINE_BIT   = (1 << 12);
-const RenditionFlags RE_ROUNDCORNERS_MASK = (15 << 16);
-const RenditionFlags RE_ROUNDCORNERS_BIT = (1 << 16);
+const RenditionFlags DEFAULT_RENDITION            = 0;
+const RenditionFlags RE_BOLD                      = (1 << 0);
+const RenditionFlags RE_BLINK                     = (1 << 1);
+const RenditionFlags RE_TRANSPARENT               = (1 << 2);
+const RenditionFlags RE_REVERSE                   = (1 << 3); // Screen only
+const RenditionFlags RE_ITALIC                    = (1 << 4);
+const RenditionFlags RE_CURSOR                    = (1 << 5);
+const RenditionFlags RE_EXTENDED_CHAR             = (1 << 6);
+const RenditionFlags RE_FAINT                     = (1 << 7);
+const RenditionFlags RE_STRIKEOUT                 = (1 << 8);
+const RenditionFlags RE_CONCEAL                   = (1 << 9);
+const RenditionFlags RE_OVERLINE                  = (1 << 10);
+const RenditionFlags RE_SELECTED                  = (1 << 11);
+const RenditionFlags RE_UNDERLINE_MASK            = (15 << 12);
+const RenditionFlags RE_UNDERLINE_NONE            = 0;
+const RenditionFlags RE_UNDERLINE                 = 1;
+const RenditionFlags RE_UNDERLINE_DOUBLE          = 2;
+const RenditionFlags RE_UNDERLINE_CURL            = 3;
+const RenditionFlags RE_UNDERLINE_DOT             = 4;
+const RenditionFlags RE_UNDERLINE_DASH            = 5;
+const RenditionFlags RE_UNDERLINE_BIT             = (1 << 12);
+const RenditionFlags RE_ROUNDCORNERS_MASK         = (15 << 16);
+const RenditionFlags RE_ROUNDCORNERS_NONE         = 0;
+const RenditionFlags RE_ROUNDCORNERS_TOP_RIGHT    = (1 << 0);
+const RenditionFlags RE_ROUNDCORNERS_TOP_LEFT     = (1 << 1);
+const RenditionFlags RE_ROUNDCORNERS_BOTTOM_LEFT  = (1 << 2);
+const RenditionFlags RE_ROUNDCORNERS_BOTTOM_RIGHT = (1 << 3);
+const RenditionFlags RE_ROUNDCORNERS_BIT          = (1 << 16);
 // Masks of flags that matter for drawing what is below/above the text
 const RenditionFlags RE_MASK_UNDER = RE_TRANSPARENT | RE_REVERSE | RE_CURSOR | RE_SELECTED | RE_ROUNDCORNERS_MASK;
 const RenditionFlags RE_MASK_ABOVE = RE_TRANSPARENT | RE_REVERSE | RE_CURSOR | RE_SELECTED | RE_STRIKEOUT | RE_CONCEAL | RE_OVERLINE | RE_UNDERLINE_MASK;
