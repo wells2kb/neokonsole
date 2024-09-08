@@ -798,8 +798,11 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                 first = false;
             } else {
                 if (drawBG) {
-                    if (style[lastX].rendition.f.roundCorners != RE_ROUNDCORNERS_NONE
-                        && style[x].rendition.f.roundCorners == RE_ROUNDCORNERS_NONE) {
+                    RenditionFlags drawCornerFlags = style[lastX].rendition.f.roundCorners;
+                    RenditionFlags nextCornerFlags = style[x].rendition.f.roundCorners;
+
+                    if (drawCornerFlags != RE_ROUNDCORNERS_NONE
+                        && nextCornerFlags == RE_ROUNDCORNERS_NONE) {
 
                         QRect round_corner_background = QRect(
                             rect.x() + fontWidth * (i - 0.5)
@@ -810,56 +813,43 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                         painter.fillRect(round_corner_background, style[x].backgroundColor.color(colorTable));
                     }
 
-                    switch (style[lastX].rendition.f.roundCorners) {
-                        case RE_ROUNDCORNERS_TOP_RIGHT
-                            | RE_ROUNDCORNERS_TOP_LEFT
-                            | RE_ROUNDCORNERS_BOTTOM_LEFT
-                            | RE_ROUNDCORNERS_BOTTOM_RIGHT: {
-
-                            QPainterPath path;
-                            path.addRoundedRect(constRect, 5, 5);
-                            painter.fillPath(path, backgroundColor);
-                            break;
-                        }
-
-                        case RE_ROUNDCORNERS_TOP_LEFT
-                            | RE_ROUNDCORNERS_BOTTOM_LEFT: {
-
-                            QPainterPath path;
-                            path.addRoundedRect(constRect, 5, 5);
-                            painter.fillPath(path, backgroundColor);
-
-                            QRect hacktangle = QRect(rect.x() + fontWidth * (i - 1), rect.y(), fontWidth, rect.height());
-                            painter.fillRect(hacktangle, backgroundColor);
-                            break;
-                        }
-
-                        case RE_ROUNDCORNERS_TOP_RIGHT
-                            | RE_ROUNDCORNERS_BOTTOM_RIGHT: {
-
-                            constRect.setWidth(constRect.width() - fontWidth);
-                            painter.fillRect(constRect, backgroundColor);
-
-                            QPainterPath path;
-                            QRect hacktangle = QRect(rect.x() + fontWidth * (i - 2), rect.y(), fontWidth * 2, rect.height());
-                            path.addRoundedRect(hacktangle, 5, 5);
-                            painter.fillPath(path, backgroundColor);
-                            break;
-                        }
-
-                        case RE_ROUNDCORNERS_NONE: {
-                            /* When rendering a rectangular highlight and the
-                             * next char has a round highlight. Then overlap
-                             * into its' highlight so that it can draw the
-                             * round corners over the current highlight. */
-                            if (style[x].rendition.f.roundCorners != RE_ROUNDCORNERS_NONE)
-                            {
-                                constRect.setWidth(constRect.width() + (fontWidth * 0.5));
-                            }
-                            painter.fillRect(constRect, backgroundColor);
-                            break;
-                        }
+                    /* When rendering a rectangular highlight and the
+                     * next char has a round highlight. Then overlap
+                     * into its' highlight so that it can draw the
+                     * round corners over the current highlight. */
+                    if (nextCornerFlags != RE_ROUNDCORNERS_NONE
+                            && drawCornerFlags == RE_ROUNDCORNERS_NONE)
+                    {
+                        constRect.setWidth(constRect.width() + (fontWidth * 0.5));
                     }
+                    qreal radius = constRect.height() * 0.35;
+                    QPainterPath path;
+                    path.arcMoveTo(constRect.x() + constRect.width() - radius, constRect.y(), radius, radius, 0);
+                    if (drawCornerFlags & RE_ROUNDCORNERS_TOP_RIGHT) {
+                        path.arcTo(constRect.x() + constRect.width() - radius, constRect.y(), radius, radius, 0, 90);
+                    } else {
+                        path.lineTo(constRect.x() + constRect.width(), constRect.y());
+                    }
+
+                    if (drawCornerFlags & RE_ROUNDCORNERS_TOP_LEFT) {
+                        path.arcTo(constRect.x(), constRect.y(), radius, radius, 90, 90);
+                    } else {
+                        path.lineTo(constRect.x(), constRect.y());
+                    }
+
+                    if (drawCornerFlags & RE_ROUNDCORNERS_BOTTOM_LEFT) {
+                        path.arcTo(constRect.x(), constRect.y() + constRect.height() - radius, radius, radius, 180, 90);
+                    } else {
+                        path.lineTo(constRect.x(), constRect.y() + constRect.height());
+                    }
+
+                    if (drawCornerFlags & RE_ROUNDCORNERS_BOTTOM_RIGHT) {
+                        path.arcTo(constRect.x() + constRect.width() - radius, constRect.y() + constRect.height() - radius, radius, radius, 270, 90);
+                    } else {
+                        path.lineTo(constRect.x() + constRect.width(), constRect.y() + constRect.height());
+                    }
+                    path.closeSubpath();
+                    painter.fillPath(path, backgroundColor);
                 }
             }
             if (i == width) {
