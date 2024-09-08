@@ -558,8 +558,8 @@ void Vt102Emulation::csi_dispatch(const uint cc)
                        && params.sub[i].value[1] == 5) {
                 // ESC[ ... 48:5:<index> ... m -or- ESC[ ... 38:5:<index> ... m
                 processToken(token_csi_ps(cc, params.value[i]), COLOR_SPACE_256, params.sub[i].value[2]);
-            } else if (cc == 'm' && params.sub[i].count == 1 && params.value[i] == 108) {
-                processToken(token_csi_ps(cc, params.value[i]), params.sub[i].value[1], 1);
+            } else if (cc == 'm' && params.sub[i].count == 2 && params.value[i] == 108) {
+                processToken(token_csi_ps(cc, params.value[i]), params.sub[i].value[1], params.sub[i].value[2]);
             } else if (_nIntermediate == 0) {
                 processToken(token_csi_ps(cc, params.value[i]), 0, 0);
             }
@@ -1907,7 +1907,7 @@ void Vt102Emulation::processToken(int token, int p, int q)
     case token_csi_ps('m',  106) : _currentScreen->setBackColor         (COLOR_SPACE_SYSTEM, 14); break;
     case token_csi_ps('m',  107) : _currentScreen->setBackColor         (COLOR_SPACE_SYSTEM, 15); break;
 
-    case token_csi_ps('m',  108) : _currentScreen->setRendition         (RE_ROUNDCORNERS_BIT * p); break;
+    case token_csi_ps('m',  108) : _currentScreen->setRendition         (RE_ROUNDCORNERS_BIT * (q | (p << 4))); break;
     case token_csi_ps('m',  109) : _currentScreen->resetRendition       (RE_ROUNDCORNERS_MASK); break;
 
     case token_csi_ps('n',   5) :      reportStatus         (          ); break;

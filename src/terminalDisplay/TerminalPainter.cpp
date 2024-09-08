@@ -801,9 +801,10 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                     RenditionFlags drawCornerFlags = style[lastX].rendition.f.roundCorners;
                     RenditionFlags nextCornerFlags = style[x].rendition.f.roundCorners;
 
-                    if (drawCornerFlags != RE_ROUNDCORNERS_NONE
-                        && nextCornerFlags == RE_ROUNDCORNERS_NONE) {
-
+                    if (drawCornerFlags & RE_ROUNDCORNERS_OVERLAP_ROUND
+                        && drawCornerFlags != RE_ROUNDCORNERS_NONE
+                        && ~nextCornerFlags & RE_ROUNDCORNERS_TOP_LEFT
+                        && ~nextCornerFlags & RE_ROUNDCORNERS_BOTTOM_LEFT) {
                         QRect round_corner_background = QRect(
                             rect.x() + fontWidth * (i - 0.5)
                             , rect.y()
@@ -813,18 +814,17 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                         painter.fillRect(round_corner_background, style[x].backgroundColor.color(colorTable));
                     }
 
-                    /* When rendering a rectangular highlight and the
-                     * next char has a round highlight. Then overlap
-                     * into its' highlight so that it can draw the
-                     * round corners over the current highlight. */
-                    if (nextCornerFlags != RE_ROUNDCORNERS_NONE
-                            && drawCornerFlags == RE_ROUNDCORNERS_NONE)
-                    {
+                    if (nextCornerFlags & RE_ROUNDCORNERS_OVERLAP_ROUND
+                            && nextCornerFlags != RE_ROUNDCORNERS_NONE
+                            && ~drawCornerFlags & (RE_ROUNDCORNERS_TOP_RIGHT
+                            && ~drawCornerFlags & RE_ROUNDCORNERS_BOTTOM_RIGHT) {
                         constRect.setWidth(constRect.width() + (fontWidth * 0.5));
                     }
+
                     qreal radius = constRect.height() * 0.35;
                     QPainterPath path;
                     path.arcMoveTo(constRect.x() + constRect.width() - radius, constRect.y(), radius, radius, 0);
+
                     if (drawCornerFlags & RE_ROUNDCORNERS_TOP_RIGHT) {
                         path.arcTo(constRect.x() + constRect.width() - radius, constRect.y(), radius, radius, 0, 90);
                     } else {
@@ -848,6 +848,7 @@ void TerminalPainter::drawBelowText(QPainter &painter,
                     } else {
                         path.lineTo(constRect.x() + constRect.width(), constRect.y() + constRect.height());
                     }
+
                     path.closeSubpath();
                     painter.fillPath(path, backgroundColor);
                 }
